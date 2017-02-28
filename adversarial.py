@@ -27,9 +27,9 @@ if not path.exists(savedir):
 
 ############### HYPER-PARAMETERS ###########################
 learning_rate = 1e-4
-n_iter = 20000     # number of gradient descent iterations
+n_iter = 40000     # number of gradient descent iterations
 batch_size = 50    # mini-batch size from dataset
-dropout_prob = 0.5
+dropout_prob = 0.65
 
 ############### HELPER FUNCTIONS ###########################
 def conv2d(tensor, F, b, strides=1):
@@ -64,7 +64,7 @@ def bias(shape):
 
 def covnet(tensor, weights, biases, keep_prob):
   '''
-    Creates a 3 layer covnet model for the purposes of this
+    Creates a 3 convlayer + 2 fully connected layer model for the purposes of this
     assignment. Returns the model predictions on MINST classes.
 
     tensor - MINST input vector [-1, 784]
@@ -95,16 +95,24 @@ def covnet(tensor, weights, biases, keep_prob):
   h_layer_2_pool = maxpool(h_layer_2_conv)
   tf.histogram_summary('Convolution layer 2 pool', h_layer_2_pool)
 
-  # fully connected layer
+  # fully connected layer 1
   h_layer_2_pool_flat = tf.reshape(h_layer_2_pool, [-1, 7*7*64])
 
   h_fully_connected = tf.nn.relu(tf.matmul(h_layer_2_pool_flat, weights['wf1']) + biases['bf1'])
-  tf.histogram_summary('Fully connected RELU', h_fully_connected)
+  tf.histogram_summary('Fully connected RELU 1', h_fully_connected)
 
   h_fc1_drop = tf.nn.dropout(h_fully_connected, keep_prob)
 
+  # fully connected layer 2
+
+  h_fully_connected_2 = tf.nn.relu(tf.matmul(h_fc1_drop, weights['wf2']) + biases['bf2'])
+  tf.histogram_summary('Fully connected RELU 2', h_fully_connected_2)
+
+  h_fc2_drop = tf.nn.dropout(h_fully_connected_2, keep_prob)
+
+
   # final output layer
-  out = tf.matmul(h_fc1_drop, weights['wo1']) + biases['bo1']
+  out = tf.matmul(h_fc2_drop, weights['wo1']) + biases['bo1']
   tf.histogram_summary('Model predictions', out)
 
   return out
@@ -123,15 +131,17 @@ weights = {
   # 5x5 conv, 32 inputs, 64 outputs
   'wc2': weight([5, 5, 32, 64]),
   # fully connected layer with 1024 hidden units and dropout
-  'wf1': weight([7*7*64, 1024]),
+  'wf1': weight([7*7*64, 1500]),
+  'wf2': weight([1500, 800]),
   # output layer
-  'wo1': weight([1024, 10])
+  'wo1': weight([800, 10])
 }
 
 biases = {
   'bc1': bias([32]),
   'bc2': bias([64]),
-  'bf1': bias([1024]),
+  'bf1': bias([1500]),
+  'bf2': bias([800]),
   'bo1': bias([10])
 }
 
