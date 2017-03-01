@@ -1,6 +1,5 @@
 DONE Read the paper by Goodfellow et al.
-DO Read tensorflow MNIST CNN Code.
-DO Find correctly classified examples of class 2
-DO Write routine generateAdversarialExample(class, input) to return.
-
-DO Modify backpropagation routine to compute gradient wrt input
+DONE Read tensorflow MNIST CNN Code.
+DONE Find correctly classified examples of class 2
+DONE Modify backpropagation routine to compute gradient wrt input
+DONE Write routine generateAdversarialExample(class, input) to return.
