@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from utils import create_directories
+from utils import create_directories, savedir, logdir
 
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -15,12 +15,11 @@ import sys
 import tensorflow as tf
 
 #################### SETUP ####################
-savedir, logdir = create_directories(['save', 'logs'])
 
 #################### HYPER-PARAMETERS ####################
 
 learning_rate = 1e-4
-n_iter = 10          # number of gradient descent iterations
+n_iter = 20000          # number of gradient descent iterations
 batch_size = 50         # mini-batch size from dataset
 dropout_prob = 0.5
 
@@ -178,13 +177,15 @@ def log_summaries():
         tf.scalar_summary('wo1/mean', tf.reduce_mean(weights['wo1']))
         tf.scalar_summary('bo1/mean', tf.reduce_mean(biases['bo1']))
 
+summaries = tf.merge_all_summaries()
+
 #################### TRAINING SESSION ####################
 
 
 def train():
+    create_directories()
     # start recording summaries
     log_summaries()
-    summaries = tf.merge_all_summaries()
 
     writer = tf.train.SummaryWriter(
         logdir,
