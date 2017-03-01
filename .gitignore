@@ -94,4 +94,3 @@ ENV/
 .ropeproject
 MNIST_data
 logs/*
-save/*

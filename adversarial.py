@@ -48,6 +48,7 @@ trgt_acc = scaled_logits[0, target]
 grad = tf.reshape(tf.gradients(trgt_acc, covnet_model.x)[0], shape=[1, 28, 28, 1])
 
 init = tf.initialize_all_variables()
+
 ###################### SUMMARIES ###############################################
 
 tf.image_summary('input', tf.reshape(covnet_model.x, shape=[1, 28, 28, 1]))
@@ -107,11 +108,15 @@ if __name__ == '__main__':
 
     i = 0
     target_acc = 0.
-    while target_acc < .9:
-      source_acc, target_acc, g, summ = sess.run(
-        [src_acc, trgt_acc, grad, summaries],
+    while target_acc < .99:
+      logits, source_acc, target_acc, g, summ = sess.run(
+        [scaled_logits, src_acc, trgt_acc, grad, summaries],
         feed_dict={covnet_model.x: image, covnet_model.y: label, covnet_model.keep_prob: 1.}
       )
+
+      if i == 0 and not (np.argmax(logits) == 2):
+        print('Randomly selected image not classified correctly. Try again.')
+        sys.exit()
 
       writer.add_summary(summ, global_step=i)
 
