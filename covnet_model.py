@@ -19,7 +19,7 @@ import tensorflow as tf
 #################### HYPER-PARAMETERS ####################
 
 learning_rate = 1e-4
-n_iter = 20000          # number of gradient descent iterations
+n_iter = 50000          # number of gradient descent iterations
 batch_size = 50         # mini-batch size from dataset
 dropout_prob = 0.5
 
